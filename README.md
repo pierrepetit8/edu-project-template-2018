@@ -1,6 +1,8 @@
 Pierre PETIT et Valentin FERRERE présentent:
 ==
 
+Pierre PETIT: petit.pierre09@gmail.com
+Valentin FERRERE: v.ferrere0@gmail.com
 
 # Project LicPro 2017/2018
 
