@@ -88,5 +88,52 @@ router.delete("/episode", function (req, res) {
 
     res.send(episode);
 });
+
+router.patch("/episode", function(req, res) {
+    var files = fs.readdirSync("./data");
+    var id = req.query.id;
+    var episode = {};
+    files.forEach((elt) => {
+        var fragments = elt.split('.');
+        if(fragments.pop() == 'json' && fragments[0] == id){
+            var data = fs.readFileSync('./data/' + elt);
+            var parsed = JSON.parse(data);
+            episode = {
+                id : elt.split('.')[0],
+                name : parsed.name,
+                code : parsed.code,
+                score : parsed.score,
+            };
+        }
+    });
+
+    if (Object.keys(episode).length == 0){
+        res.send(episode);
+    }
+
+    if( req.query.name != null){
+        episode.name = req.query.name;
+    }
+
+
+    if( req.query.score != null) {
+        episode.score = req.query.score;
+    }
+
+
+    if( req.query.code != null) {
+        episode.code = req.query.code;
+    }
+
+    fs.writeFile("data/"+ episode.id +".json", JSON.stringify({
+        name : episode.name,
+        code : episode.code,
+        score : episode.score
+    }));
+
+    res.send(episode);
+});
+
+
 module.exports = router;
 
