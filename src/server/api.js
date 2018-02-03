@@ -1,7 +1,10 @@
+
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var uuid = require('uuid');
+const dal = require('./dal.js')
+
 
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
@@ -12,65 +15,49 @@ router.get('/', function(req, res) {
     res.send('Veuillez choisir une action');
 });
 
+
 router.get('/episodes', function(req, res) {
-    var files = fs.readdirSync("./data");
-    var episodes = [];
-
-    files.forEach((elt) => {
-        if(elt.split('.').pop() == 'json'){
-            var data = fs.readFileSync('./data/' + elt);
-            var parsed = JSON.parse(data);
-            episodes.push({
-                id : elt.split('.')[0],
-                name : parsed.name,
-                code : parsed.code,
-                score : parsed.score,
-            });
-        }
+    dal.getAll().then((episodes) => {
+        res.status(200);
+        res.send(episodes);
+    }).catch(() => {
+        res.status(404).end();
     });
-
-    res.send(episodes);
 });
 
 // define the about route
 router.post('/episodes/add', function(req, res) {
     var id = uuid.v4();
-    var episode = req.query;
-    fs.writeFile("data/"+id+".json", JSON.stringify(episode));
-    res.send({
-        id : id,
-        name : episode.name,
-        code : episode.code,
-        score : episode.score
+    var episodeToAdd = req.body;
+    if(typeof episodeToAdd.name !== "string" || typeof episodeToAdd.code !== "string" || typeof episodeToAdd.score !== "number") {
+        res.status(400);
+    }
+    dal.insert(episodeToAdd).then((episode) => {
+        res.status(200);
+        res.send(episode);
+    }).catch(() => {
+        res.status(404).end();
     });
 });
 
-router.get("/episode", function (req, res) {
-    var files = fs.readdirSync("./data");
-    var id = req.query.id;
-    var episode = {};
-    files.forEach((elt) => {
-        var fragments = elt.split('.');
-        if(fragments.pop() == 'json' && fragments[0] == id){
-            var data = fs.readFileSync('./data/' + elt);
-            var parsed = JSON.parse(data);
-            episode = {
-                id : elt.split('.')[0],
-                name : parsed.name,
-                code : parsed.code,
-                score : parsed.score,
-            };
-        }
-    });
-
-    res.send(episode);
+router.get('/episode/:id', function (req, res) {
+    let id = req.params.id;
+    console.log(req);
+    if(id != undefined) {
+        dal.getById(req.params.id).then((episode) => {
+            res.send(episode);
+            res.status(200);
+        }).catch(() => {
+            res.status(404);
+        })
+    }
 });
 
 router.delete("/episode", function (req, res) {
     var files = fs.readdirSync("./data");
     var id = req.query.id;
     var episode = {};
-    files.forEach((elt) => {
+    files.forEach(function(elt) {
         var fragments = elt.split('.');
         if(fragments.pop() == 'json' && fragments[0] == id){
             var data = fs.readFileSync('./data/' + elt);
@@ -93,7 +80,7 @@ router.patch("/episode", function(req, res) {
     var files = fs.readdirSync("./data");
     var id = req.query.id;
     var episode = {};
-    files.forEach((elt) => {
+    files.forEach(function(elt) {
         var fragments = elt.split('.');
         if(fragments.pop() == 'json' && fragments[0] == id){
             var data = fs.readFileSync('./data/' + elt);
