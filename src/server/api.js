@@ -79,7 +79,9 @@ router.patch("/episode", function(req, res) {
     if (Object.keys(episodeToSend).length == 0){
         res.send(episodeToSend);
     }
-
+    if(id != null) {
+        episodeToSend.id = id;
+    }
     if( req.body.name != null){
         episodeToSend.name = req.body.name;
     }

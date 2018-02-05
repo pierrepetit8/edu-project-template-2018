@@ -83,7 +83,6 @@ module.exports.delete = function(id) {
 }
 
 module.exports.update = function(episode) {
-
     return new Promise((resolve, reject) => {
         fs.writeFile("data/"+ episode.id +".json", JSON.stringify({
             name : episode.name,
@@ -96,5 +95,6 @@ module.exports.update = function(episode) {
                 resolve(episode);
             }
         });
+        resolve(episode);
     })
 }
