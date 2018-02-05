@@ -62,3 +62,39 @@ module.exports.insert = function(episode) {
         resolve(episode);
     });
 }
+//TODO faire marcher avec le getById interne à la DAL
+module.exports.delete = function(id) {
+    var files = fs.readdirSync("./data");
+    var episode = {};
+    return new Promise((resolve, reject) => {
+        getById(id).then((episode) => {
+            fs.unlinkSync('./data/' + elt, (err) => {
+                if(error) {
+                    reject(new Error('Probleme de unlink fichier'));
+                } else {
+                    console.log(episode);
+                    resolve(episode);
+                }
+            });
+        }).catch((err) => {
+            reject(err);
+        })
+    });
+}
+
+module.exports.update = function(episode) {
+
+    return new Promise((resolve, reject) => {
+        fs.writeFile("data/"+ episode.id +".json", JSON.stringify({
+            name : episode.name,
+            code : episode.code,
+            score : episode.score
+        }), (err) => {
+            if(err) {
+                reject(episode);
+            } else {
+                resolve(episode);
+            }
+        });
+    })
+}
