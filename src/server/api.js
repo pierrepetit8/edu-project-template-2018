@@ -56,8 +56,7 @@ router.get('/episode/:id', function (req, res) {
 });
 
 router.delete("/episode/:id", function (req, res) {
-    let id = req.params.id
-    console.log(id);
+    let id = req.params.id;
     if(id != undefined) {
         dal.delete(id).then((episode) => {
             console.log(episode);
