@@ -17,14 +17,6 @@ function readFile(fileName) {
 
 }
 
-function deleteFile(fileName) {
-    return new Promise((resolve, reject) => {
-
-    })
-}
-/**
- * Renvoit tous les episodes
- */
 module.exports.getAll = function() {
     var files = fs.readdirSync("./data");
     var episodes = [];
@@ -48,42 +40,34 @@ module.exports.getAll = function() {
 module.exports.getById = function(id) {
     var files = fs.readdirSync("./data");
     var episode;
-    console.log(id);
     return new Promise((resolve, reject) => {
         files.forEach(function(elt) {
             var fragments = elt.split('.');
             if(fragments.pop() == 'json' && fragments[0] == id){
                 readFile(elt).then((parsed) => {
                     episode = {
-                        id : elt.split('.')[0],
+                        id : id,
                         name : parsed.name,
                         code : parsed.code,
                         score : parsed.score,
                     };
+                    resolve(episode);
+                }).catch((err) => {
+                    reject(err);
                 });
             }
         });
-        if(Object.keys(episode).length === 0) {
-            console.log("reject");
-            reject(episode);
-        }
-        console.log("resolve");
-        resolve(episode);
     });
 };
 
-module.exports.insert = function(episode) {
-    var id = uuid.v4();
+module.exports.insert = function(episode, id) {
     return new Promise((resolve, reject) => {
         fs.writeFile("data/"+id+".json", JSON.stringify(episode));
         resolve(episode);
     });
 };
 
-//TODO faire marcher avec le getById interne à la DAL
 module.exports.delete = function(id) {
-    var files = fs.readdirSync("./data");
-    var episode = {};
     return new Promise((resolve, reject) => {
         this.getById(id).then((episode) => {
             fs.unlink('./data/' + id + ".json", (err) => {
@@ -101,19 +85,19 @@ module.exports.delete = function(id) {
     });
 };
 
-module.exports.update = function(episode) {
+module.exports.update = function(id, body) {
     return new Promise((resolve, reject) => {
-        fs.writeFile("data/"+ episode.id +".json", JSON.stringify({
-            name : episode.name,
-            code : episode.code,
-            score : episode.score
-        }), (err) => {
-            if(err) {
-                reject(episode);
-            } else {
-                resolve(episode);
+        this.getById(id).then((episode) => {
+            for (var key in body){
+                if (episode.hasOwnProperty(key)){
+                    console.log(key)
+                    episode[key] = body[key];
+                }
             }
+            delete episode.id;
+            this.insert(episode, id).then(resolve(episode));
+        }).catch((err) => {
+            reject(err);
         });
-        resolve(episode);
     })
 };

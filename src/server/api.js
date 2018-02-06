@@ -32,7 +32,7 @@ router.post('/episodes/add', function(req, res) {
     if(typeof episodeToAdd.name !== "string" || typeof episodeToAdd.code !== "string" || typeof episodeToAdd.score !== "number") {
         res.status(400);
     }
-    dal.insert(episodeToAdd).then((episode) => {
+    dal.insert(episodeToAdd, id).then((episode) => {
         res.status(200);
         res.send(episode);
     }).catch(() => {
@@ -70,32 +70,9 @@ router.delete("/episode/:id", function (req, res) {
     }
 });
 
-router.patch("/episode", function(req, res) {
-    var files = fs.readdirSync("./data");
-    var id = req.body.id;
-    var episodeToSend = {};
-
-    if (Object.keys(episodeToSend).length == 0){
-        res.send(episodeToSend);
-    }
-    if(id != null) {
-        episodeToSend.id = id;
-    }
-    if( req.body.name != null){
-        episodeToSend.name = req.body.name;
-    }
-
-
-    if( req.body.score != null) {
-        episodeToSend.score = req.body.score;
-    }
-
-
-    if( req.body.code != null) {
-        episodeToSend.code = req.body.code;
-    }
-    console.log(episodeToSend);
-    dal.update(episodeToSend).then((episode) => {
+router.patch("/episode/:id", function(req, res) {
+    var id = req.params.id;
+    dal.update(id, req.body).then((episode) => {
         console.log(episode);
         res.send(episode);
         res.status(200);
