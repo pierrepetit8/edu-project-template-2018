@@ -33,7 +33,8 @@ router.post('/episodes/add', function(req, res) {
         res.status(400);
     }
     dal.insert(episodeToAdd, id).then((episode) => {
-        res.status(200);
+        episode.id = id;
+        res.status(201);
         res.send(episode);
     }).catch(() => {
         res.status(404).end();

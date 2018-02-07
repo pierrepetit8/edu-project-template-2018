@@ -3,12 +3,12 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var uuid = require('uuid');
-
+var config = require('./config.js')
 
 function readFile(fileName) {
     return new Promise((resolve, reject) => {
         if(fileName.split('.').pop() == 'json'){
-             fs.readFile('./data/' + fileName, (err, data) => {
+             fs.readFile(config.data + fileName, (err, data) => {
                  if(err) reject(err);
                  else resolve(JSON.parse(data));
              });
@@ -18,7 +18,7 @@ function readFile(fileName) {
 }
 
 module.exports.getAll = function() {
-    var files = fs.readdirSync("./data");
+    var files = fs.readdirSync(config.data);
     var episodes = [];
     return new Promise((resolve, reject) => {
         files.forEach(function(elt) {
@@ -38,7 +38,7 @@ module.exports.getAll = function() {
 };
 
 module.exports.getById = function(id) {
-    var files = fs.readdirSync("./data");
+    var files = fs.readdirSync(config.data);
     var episode;
     return new Promise((resolve, reject) => {
         files.forEach(function(elt) {
@@ -62,7 +62,7 @@ module.exports.getById = function(id) {
 
 module.exports.insert = function(episode, id) {
     return new Promise((resolve, reject) => {
-        fs.writeFile("data/"+id+".json", JSON.stringify(episode));
+        fs.writeFile(config.data + "/" + id + ".json", JSON.stringify(episode));
         resolve(episode);
     });
 };
@@ -70,7 +70,7 @@ module.exports.insert = function(episode, id) {
 module.exports.delete = function(id) {
     return new Promise((resolve, reject) => {
         this.getById(id).then((episode) => {
-            fs.unlink('./data/' + id + ".json", (err) => {
+            fs.unlink(config.data + "/" + id + ".json", (err) => {
 
                 if(err) {
                     reject(err);
