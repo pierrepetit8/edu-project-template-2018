@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
 router.get('/episodes', function(req, res) {
     dal.getAll().then((episodes) => {
         console.log(episodes);
-        res.status(200);
+        res.status(201);
         res.send(episodes);
     }).catch(() => {
         res.status(404).end();
@@ -76,6 +76,7 @@ router.patch("/episode/:id", function(req, res) {
     var id = req.params.id;
     dal.update(id, req.body).then((episode) => {
         console.log(episode);
+        episode.id = id;
         res.send(episode);
         res.status(201);
     }).catch(() => {

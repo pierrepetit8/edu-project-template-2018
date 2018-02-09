@@ -80,7 +80,7 @@ describe('Update an episode', () => {
       code: "S03E02",
       score: 5
     })
-    .expect('status', 201)
+    .expect('status', 200)
     .expect('jsonTypes', {
       'id': Joi.string().required(),
       'name': Joi.string().required(),
@@ -101,3 +101,58 @@ describe('Update an episode', () => {
       });
   });
 });
+
+describe('Delete an episode', () => {
+  let id;
+  it('should make an http request', (done) => {
+    createFakeEpisode()
+    frisby.del(`${URL}/1111-3333`)
+    .expect('status', 200)
+    .expect('jsonTypes', {
+      'id': '1111-3333',
+      'name': 'Lethal Weapon',
+      'code': 'S01E01',
+      'score': 7
+    }).then((res) => {
+      id = res.body.id;
+    })
+    .done(done);  
+  });
+
+  it ('should\'t have file in data', (done) => {
+      fs.stat(path.join(DATA_DIR, `${id}.json`), (err, stats) => {
+        if(err) {
+          done();
+        } else fail();
+      });
+  });
+});
+
+describe('Get an episode', () => {
+  let id;
+  it('should make an http request', (done) => {
+    createFakeEpisode()
+    frisby.get(`${URL}/1111-3333`)
+    .expect('status', 200)
+    .expect('jsonTypes', {
+      'id': Joi.string().required(),
+      'name': Joi.string().required(),
+      'code': Joi.string().required(),
+      'score': Joi.number().required()
+    }).then((res) => {
+      id = res.body.id;
+    })
+    .done(done);  
+  });
+
+  it ('should have file in data', (done) => {
+    fs.stat(path.join(DATA_DIR, `${id}.json`), (err, stats) => {
+      if (err  || !stats.isFile()) {
+        fail();
+      }
+      done();
+    });
+  });
+});
+
+
