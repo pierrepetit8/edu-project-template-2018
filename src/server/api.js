@@ -18,6 +18,7 @@ router.get('/', function(req, res) {
 
 router.get('/episodes', function(req, res) {
     dal.getAll().then((episodes) => {
+        console.log(episodes);
         res.status(200);
         res.send(episodes);
     }).catch(() => {
@@ -47,7 +48,7 @@ router.get('/episode/:id', function (req, res) {
     if(id != undefined) {
         dal.getById(id).then((episode) => {
             res.send(episode);
-            res.status(200);
+            res.status(201);
         }).catch(() => {
             res.status(404);
         })
@@ -62,7 +63,7 @@ router.delete("/episode/:id", function (req, res) {
         dal.delete(id).then((episode) => {
             console.log(episode);
             res.send(episode);
-            res.status(200);
+            res.status(201);
         }).catch(() => {
             res.status(404);
         })
@@ -76,7 +77,7 @@ router.patch("/episode/:id", function(req, res) {
     dal.update(id, req.body).then((episode) => {
         console.log(episode);
         res.send(episode);
-        res.status(200);
+        res.status(201);
     }).catch(() => {
         res.status(404);
     })

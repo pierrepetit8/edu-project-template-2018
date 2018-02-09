@@ -8,9 +8,12 @@ var config = require('./config.js')
 function readFile(fileName) {
     return new Promise((resolve, reject) => {
         if(fileName.split('.').pop() == 'json'){
-             fs.readFile(config.data + fileName, (err, data) => {
+            console.log(fileName);
+             fs.readFile(config.data + "/" + fileName, (err, data) => {
                  if(err) reject(err);
-                 else resolve(JSON.parse(data));
+                 else {
+                     resolve(JSON.parse(data));
+                 }
              });
         }
     })
@@ -29,6 +32,7 @@ module.exports.getAll = function() {
                     code : parsed.code,
                     score : parsed.score,
                 });
+                console.log(episodes);
                 resolve(episodes);
             }).catch((err) => {
                 reject(err);
@@ -63,6 +67,7 @@ module.exports.getById = function(id) {
 module.exports.insert = function(episode, id) {
     return new Promise((resolve, reject) => {
         fs.writeFile(config.data + "/" + id + ".json", JSON.stringify(episode));
+        console.log(episode);
         resolve(episode);
     });
 };

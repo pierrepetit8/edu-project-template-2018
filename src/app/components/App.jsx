@@ -17,17 +17,58 @@ class Yolo extends Component {
 
 class Swag extends Component {
     render() {
-        return(<h1></h1>);
+        return(<div></div>);
     }
 };
 
+class Header extends Component {
+    render() {
+        return(<div className="header">
+                <nav className="navbar navbar-inverse navbar-fixed-top">
+                    <div className="container-fluid">
+                        <div className="navbar-header">
+                            <a className="navbar-brand" href="#">Netfloxe</a>
+                        </div>
+                    </div>
+                </nav>
+            </div>);
+    }
+};
+
+class ListeSerie extends Component {
+    constructor() {
+        var episodes = {};
+    }
+    
+    componentDidMount() {
+        fetch('/api/episodes', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+        '       Content-Type': 'application/json',
+            }
+        }).then((data) => {
+            console.log(data);
+            episodes = data;
+        })
+    }
+    render() {
+        return(<div>
+            {episodes.map((episode) => {
+                return <p>{ episode.name }</p>
+            }) }
+
+        </div>);
+    }
+}
 export default class App extends Component {
     render() {
         return (
             <Provider store={store}>
                 <Router>
                   <div>
-                    <Route path="/" component={Yolo}>
+                      <Header></Header>
+                    <Route path="/" component={ListeSerie}>
                     </Route>
                     <Route path="/new" component={Swag}>
                     </Route>
