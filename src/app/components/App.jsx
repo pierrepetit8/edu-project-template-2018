@@ -36,31 +36,24 @@ class Header extends Component {
 };
 
 class ListeSerie extends Component {
-    constructor() {
-        var episodes = {};
-    }
     
+    constructor() {
+        super();
+        this.episodes= {};
+    };
     componentDidMount() {
-        fetch('/api/episodes', {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-        '       Content-Type': 'application/json',
-            }
-        }).then((data) => {
-            console.log(data);
-            episodes = data;
-        })
+        fetch('/api/episodes')
+        .then(response => response.json())
+        .then(data => this.episodes = data);
     }
     render() {
         return(<div>
-            {episodes.map((episode) => {
-                return <p>{ episode.name }</p>
-            }) }
+           
 
         </div>);
     }
 }
+
 export default class App extends Component {
     render() {
         return (
