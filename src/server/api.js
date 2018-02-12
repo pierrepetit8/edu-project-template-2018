@@ -3,7 +3,7 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var uuid = require('uuid');
-const dal = require('./dal.js')
+const dal = require('./dal.js');
 
 
 router.use(function timeLog(req, res, next) {
@@ -18,7 +18,6 @@ router.get('/', function(req, res) {
 
 router.get('/episodes', function(req, res) {
     dal.getAll().then((episodes) => {
-        console.log(episodes);
         res.status(201);
         res.send(episodes);
     }).catch(() => {

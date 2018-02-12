@@ -1,9 +1,9 @@
-
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var uuid = require('uuid');
-var config = require('./config.js')
+var config = require('./config.js');
+const dal = require('./dal.js');
 
 function readFile(fileName) {
     return new Promise((resolve, reject) => {
@@ -22,23 +22,21 @@ function readFile(fileName) {
 
 module.exports.getAll = function() {
     var files = fs.readdirSync(config.data);
-    var episodes = [];
+    var promises = [];
+
+
     return new Promise((resolve, reject) => {
         files.forEach(function(elt) {
-            readFile(elt).then((parsed) => {
-                episodes.push({
-                    id : elt.split('.')[0],
-                    name : parsed.name,
-                    code : parsed.code,
-                    score : parsed.score,
-                });
-                console.log(episodes);
-                resolve(episodes);
-            }).catch((err) => {
-                reject(err);
-            });
+            var fragments = elt.split('.');
+            promises.push(dal.getById(fragments[0]));
         });
-    }) 
+
+        Promise.all(promises).then((episodes) => {
+            resolve(episodes);
+        }).catch((err) => {
+            reject("err");
+        });
+    })
 };
 
 module.exports.getById = function(id) {
