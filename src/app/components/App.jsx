@@ -6,6 +6,8 @@ import {
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configure from './store';
+import EpisodeList from './EpisodeList';
+import AddEpisode from './AddEpisode';
 
 const store = configure();
 
@@ -35,39 +37,20 @@ class Header extends Component {
     }
 };
 
-class ListeSerie extends Component {
-    
-    constructor() {
-        super();
-        this.episodes= {};
-    };
-    componentDidMount() {
-        fetch('/api/episodes')
-        .then(response => response.json())
-        .then(data => this.episodes = data);
-    }
-    render() {
-        return(<div>
-           
 
-        </div>);
-    }
-}
 
 export default class App extends Component {
     render() {
         return (
+            <div>
+            <Header/>
             <Provider store={store}>
-                <Router>
-                  <div>
-                      <Header></Header>
-                    <Route path="/" component={ListeSerie}>
-                    </Route>
-                    <Route path="/new" component={Swag}>
-                    </Route>
-                  </div>
-                </Router>
+                <div>
+                    <EpisodeList/>
+                    <AddEpisode/>
+                </div>
             </Provider>
+            </div>
         );
     }
 };

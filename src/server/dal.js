@@ -8,7 +8,6 @@ const dal = require('./dal.js');
 function readFile(fileName) {
     return new Promise((resolve, reject) => {
         if (fileName.split('.').pop() == 'json') {
-            console.log(fileName);
             fs.readFile(config.data + "/" + fileName, (err, data) => {
                 if (err) reject(err);
                 else {
@@ -17,7 +16,6 @@ function readFile(fileName) {
             });
         }
     })
-
 }
 
 module.exports.getAll = function () {
@@ -69,7 +67,6 @@ module.exports.getById = function (id) {
 module.exports.insert = function (episode, id) {
     return new Promise((resolve, reject) => {
         fs.writeFile(config.data + "/" + id + ".json", JSON.stringify(episode));
-        console.log(episode);
         resolve(episode);
     });
 };
@@ -82,7 +79,6 @@ module.exports.delete = function (id) {
                 if (err) {
                     reject(err);
                 } else {
-                    console.log(episode);
                     resolve(episode);
                 }
             });
@@ -97,7 +93,6 @@ module.exports.update = function (id, body) {
         this.getById(id).then((episode) => {
             for (var key in body) {
                 if (episode.hasOwnProperty(key)) {
-                    console.log(key)
                     episode[key] = body[key];
                 }
             }

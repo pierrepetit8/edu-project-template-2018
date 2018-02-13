@@ -36,6 +36,7 @@ router.post('/episodes/add', function(req, res) {
         episode.id = id;
         res.status(201);
         res.send(episode);
+        console.log(episode);
     }).catch(() => {
         res.status(404).end();
     });
