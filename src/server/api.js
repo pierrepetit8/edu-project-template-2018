@@ -26,7 +26,7 @@ router.get('/episodes', function(req, res) {
 });
 
 // define the about route
-router.post('/episodes/add', function(req, res) {
+router.post('/episodes', function(req, res) {
     var id = uuid.v4();
     var episodeToAdd = req.body;
     if(typeof episodeToAdd.name !== "string" || typeof episodeToAdd.code !== "string" || typeof episodeToAdd.score !== "number") {
@@ -43,7 +43,6 @@ router.post('/episodes/add', function(req, res) {
 
 router.get('/episode/:id', function (req, res) {
     let id = req.params.id;
-    console.log(req);
     if(id != undefined) {
         dal.getById(id).then((episode) => {
             res.send(episode);
@@ -74,7 +73,6 @@ router.delete("/episode/:id", function (req, res) {
 router.patch("/episode/:id", function(req, res) {
     var id = req.params.id;
     dal.update(id, req.body).then((episode) => {
-        console.log(episode);
         episode.id = id;
         res.send(episode);
         res.status(201);
