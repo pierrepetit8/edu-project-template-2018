@@ -3,8 +3,6 @@ const frisby = require('frisby');
 const path = require('path');
 const Joi = frisby.Joi;
 const dal = require('../../src/server/dal');
-
-
 const URLList = `http://localhost:${process.env.SERVER_PORT}/api/episodes`;
 const URL = `http://localhost:${process.env.SERVER_PORT}/api/episode`;
 const DATA_DIR = process.env.DATA;
@@ -49,76 +47,59 @@ function checkFileExistence(path, done){
   });
 }
 
-describe('Add an episode', () => {
-  let id;
-  it('should make an http request', (done) => {
-    frisby.post(`${URLList}`, {
-        name: "Blindspot",
-        code: "S03E02",
-        score: 5
-      })
-      .expect('status', 201)
+function requestAndCheckEpisode(call, code, id, done) {
+  call.expect('status', code)
       .expect('jsonTypes', {
         'id': Joi.string().required(),
         'name': Joi.string().required(),
         'code': Joi.string().required(),
         'score': Joi.number().required()
       }).then((res) => {
-        id = res.body.id;
-      })
-      .done(done);
+        id.value = res.body.id;
+      }).done(done);
+}
+
+describe('Add an episode', () => {
+  let id = { "value" : ""};
+
+  it('should make an http request', (done) => {
+    requestAndCheckEpisode(frisby.post(`${URLList}`, {
+      name: "Blindspot",
+      code: "S03E02",
+      score: 5
+    }), 201, id, done);
   });
 
   it ('should have file in data', (done) => {
-    checkFileExistence(path.join(DATA_DIR, `${id}.json`), done);
+    checkFileExistence(path.join(DATA_DIR, `${id.value}.json`), done);
   });
 });
 
 describe('Update an episode', () => {
-  let id;
+  let id = { "value" : ""};
   it('should make an http request', (done) => {
-    createFakeEpisode()
-    frisby.patch(`${URL}/1111-3333`, {
+    createFakeEpisode();
+    requestAndCheckEpisode(frisby.patch(`${URL}/1111-3333`, {
       name: "Change",
       code: "S03E02",
       score: 5
-    })
-    .expect('status', 200)
-    .expect('jsonTypes', {
-      'id': Joi.string().required(),
-      'name': Joi.string().required(),
-      'code': Joi.string().required(),
-      'score': Joi.number().required()
-    }).then((res) => {
-      id = res.body.id;
-    })
-    .done(done);  
+    }), 200, id, done);
   });
 
   it ('should have file in data', (done) => {
-      checkFileExistence(path.join(DATA_DIR, `${id}.json`), done);
+      checkFileExistence(path.join(DATA_DIR, `${id.value}.json`), done);
   });
 });
 
 describe('Delete an episode', () => {
-  let id;
+  let id = { "value" : ""};
   it('should make an http request', (done) => {
-    createFakeEpisode()
-    frisby.del(`${URL}/1111-3333`)
-    .expect('status', 200)
-    .expect('jsonTypes', {
-      'id': '1111-3333',
-      'name': 'Lethal Weapon',
-      'code': 'S01E01',
-      'score': 7
-    }).then((res) => {
-      id = res.body.id;
-    })
-    .done(done);  
+    createFakeEpisode();
+    requestAndCheckEpisode(frisby.del(`${URL}/1111-3333`), 200, id, done);
   });
 
   it ('should\'t have file in data', (done) => {
-      fs.stat(path.join(DATA_DIR, `${id}.json`), (err, stats) => {
+      fs.stat(path.join(DATA_DIR, `${id.value}.json`), (err, stats) => {
         if(err) {
           done();
         } else fail();
@@ -127,24 +108,14 @@ describe('Delete an episode', () => {
 });
 
 describe('Get an episode', () => {
-  let id;
+  let id = { "value" : ""};
   it('should make an http request', (done) => {
     createFakeEpisode()
-    frisby.get(`${URL}/1111-3333`)
-    .expect('status', 200)
-    .expect('jsonTypes', {
-      'id': Joi.string().required(),
-      'name': Joi.string().required(),
-      'code': Joi.string().required(),
-      'score': Joi.number().required()
-    }).then((res) => {
-      id = res.body.id;
-    })
-    .done(done);  
+    requestAndCheckEpisode(frisby.get(`${URL}/1111-3333`), 200, id, done);
   });
 
   it ('should have file in data', (done) => {
-    fs.stat(path.join(DATA_DIR, `${id}.json`), (err, stats) => {
+    fs.stat(path.join(DATA_DIR, `${id.value}.json`), (err, stats) => {
       if (err  || !stats.isFile()) {
         fail();
       }
