@@ -47,7 +47,7 @@ export default class App extends Component {
             <Provider store={store}>
                 <div>
                     <EpisodeList/>
-                    <AddEpisode/>
+                    <AddEpisode  />
                 </div>
             </Provider>
             </div>

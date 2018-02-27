@@ -17,7 +17,7 @@ class DeleteEpisode extends React.Component {
         })
         .then(response => response.json())
         .then(data => {
-            console.log("salut" +data);
+            this.forceUpdate();
         });
     }
 

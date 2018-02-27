@@ -1,4 +1,6 @@
 import React from 'react'
+import DeleteEpisode from './DeleteEpisode';
+import UpdateEpisode from './UpdateEpisode';
 
 
 const Episode = ({id, name, code, score}) => {
@@ -6,7 +8,7 @@ const Episode = ({id, name, code, score}) => {
         <td>{name}</td>
         <td>{code}</td>
         <td>{score}</td>
-        <td><button>Delete</button></td>
+        <td> <UpdateEpisode id={id}/></td>
     </tr>);
 }
 

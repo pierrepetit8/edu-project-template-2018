@@ -16,7 +16,6 @@ class EpisodeList extends React.Component {
             console.log(data);
             this.setState({episodes : data});
         });
-        
     }
     render() {
         return(<div>

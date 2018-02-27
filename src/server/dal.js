@@ -89,6 +89,7 @@ module.exports.delete = function (id) {
 };
 
 module.exports.update = function (id, body) {
+    console.log('fkfkdsfsdlkfdslfdkslf');
     return new Promise((resolve, reject) => {
         this.getById(id).then((episode) => {
             for (var key in body) {

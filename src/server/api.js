@@ -42,7 +42,7 @@ router.post('/episodes/add', function(req, res) {
     });
 });
 
-router.get('/episode/:id', function (req, res) {
+router.get('/episodes/:id', function (req, res) {
     let id = req.params.id;
     console.log(req);
     if(id != undefined) {
@@ -57,7 +57,7 @@ router.get('/episode/:id', function (req, res) {
     }
 });
 
-router.delete("/episode/:id", function (req, res) {
+router.delete("/episodes/:id", function (req, res) {
     let id = req.params.id;
     if(id != undefined) {
         dal.delete(id).then((episode) => {
@@ -72,10 +72,9 @@ router.delete("/episode/:id", function (req, res) {
     }
 });
 
-router.patch("/episode/:id", function(req, res) {
+router.patch("/episodes/:id", function(req, res) {
     var id = req.params.id;
     dal.update(id, req.body).then((episode) => {
-        console.log(episode);
         episode.id = id;
         res.send(episode);
         res.status(201);
