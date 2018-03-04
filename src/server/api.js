@@ -1,8 +1,9 @@
-
+var request = require('request');
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var uuid = require('uuid');
+var config = require('./config.js');
 const dal = require('./dal.js');
 
 
@@ -25,7 +26,6 @@ router.get('/episodes', function(req, res) {
     });
 });
 
-// define the about route
 router.post('/episodes', function(req, res) {
     var id = uuid.v4();
     var episodeToAdd = req.body;
@@ -81,6 +81,92 @@ router.patch("/episode/:id", function(req, res) {
     })
 });
 
+router.get('/series', function(req, res) {
+    dal.getAll().then((episodes) => {
+        const series = [];
+        episodes.forEach((episode) => {
+            console.log(episode.name);
+            if (!series.includes(episode.name)){
+                series.push(episode.name);
+            }
+        });
+        res.status(201);
+        res.send(series);
+    }).catch(() => {
+        res.status(404).end();
+    });
+});
+
+router.post('/icons', function (req, res) {
+    const extensions = ['jpg', 'png', 'jpeg', 'gif'];
+    const icon = req.body;
+
+    const url = icon.url;
+    const fragments = url.split('.');
+    const extension = fragments[fragments.length - 1];
+
+    const name = icon.name.replace(/\s\s+/g, '_').replace(/\s/g, '_').toLowerCase() + "." +extension;
+
+    if (extensions.includes(extension)){
+        request.get(url).on('response', function(response) {
+            res.status(response.statusCode);
+        }).pipe(fs.createWriteStream(config.data + '/icons/' + name));
+    }else{
+        res.status(500);
+        res.send("L'extension du fichier n'est pas supportée");
+    }
+
+    res.end();
+});
+
+router.get('/icon/:id', function (req, res) {
+    const id = req.params.id.replace(/\s\s+/g, '_').replace(/\s/g, '_').toLowerCase();
+    const idRegex = new RegExp(id, "g");
+    let result = false;
+    fs.readdir(config.data + "/icons", (err, files) => {
+        files.forEach(function (elt) {
+            if (elt.match(idRegex)){
+                fs.readFile(config.data + "/icons/" + elt, (err, data) => {
+                    if (err) res.status(500).send("Erreur lors de la lecture du fichier");
+                    else {
+                        const fragments = elt.split('.');
+                        let type = fragments[fragments.length - 1];
+                        if (type === "jpg") type = 'jpeg';
+
+                        result = true;
+                        res.header("Content-type","image/" + type);
+                        res.status(200).send(data);
+                    }
+                });
+            }
+        });
+    });
+});
+
+
+
+function fetchImage(url, localPath, index) {
+    var extensions = ['jpg', 'png', 'jpeg', 'bmp'];
+
+    if (index === extensions.length) {
+        console.log('Fetching ' + url + ' failed.');
+        return;
+    }
+
+    var fullUrl = url + extensions[index];
+
+    request.get(fullUrl, function(response) {
+        if (response.statusCode === 200) {
+            fs.write(localPath, response.body, function() {
+                console.log('Successfully downloaded file ' + url);
+            });
+        }
+
+        else {
+            fetchImage(url, localPath, index + 1);
+        }
+    });
+}
 
 module.exports = router;
 
