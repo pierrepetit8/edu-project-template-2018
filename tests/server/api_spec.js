@@ -34,7 +34,7 @@ function cleanData() {
                 }
             });
         }
-    })]).then(()=> {
+    })]).then(() => {
         return;
     });
 }
@@ -96,11 +96,12 @@ describe('Update an episode', () => {
     let id = {"value": ""};
 
     it('should make an http request', (done) => {
-        requestAndCheckEpisode(frisby.patch(`${URL}/1111-3333`, {
+        createFakeEpisode();
+        requestAndCheckEpisode(frisby.patch(`${URLList}/1111-3333`, {
             name: "Change",
             code: "S03E02",
             score: 5
-        }), 200, id, done);
+        }), 201, id, done);
     });
 
     it('should have file in data', (done) => {
@@ -112,7 +113,7 @@ describe('Delete an episode', () => {
     let id = {"value": ""};
 
     it('should make an http request', (done) => {
-        requestAndCheckEpisode(frisby.del(`${URL}/1111-3333`), 200, id, done);
+        requestAndCheckEpisode(frisby.del(`${URLList}/1111-3333`), 201, id, done);
     });
 
     it('should\'t have file in data', (done) => {
@@ -128,7 +129,8 @@ describe('Get an episode', () => {
     let id = {"value": ""};
 
     it('should make an http request', (done) => {
-        requestAndCheckEpisode(frisby.get(`${URL}/1111-3333`), 200, id, done);
+        createFakeEpisode();
+        requestAndCheckEpisode(frisby.get(`${URLList}/1111-3333`), 201, id, done);
     });
 
     it('should have file in data', (done) => {

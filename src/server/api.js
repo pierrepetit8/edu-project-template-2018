@@ -47,8 +47,8 @@ router.get('/episodes/:id', function (req, res) {
     let id = req.params.id;
     if(id != undefined) {
         dal.getById(id).then((episode) => {
-            res.send(episode);
             res.status(201);
+            res.send(episode);
         }).catch(() => {
             res.status(404);
         })
@@ -61,9 +61,8 @@ router.delete("/episodes/:id", function (req, res) {
     let id = req.params.id;
     if(id != undefined) {
         dal.delete(id).then((episode) => {
-            console.log(episode);
-            res.send(episode);
             res.status(201);
+            res.send(episode);
         }).catch(() => {
             res.status(404);
         })
