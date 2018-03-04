@@ -1,6 +1,6 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 
-import Table, {TableBody, TableCell, TableHead, TableRow} from 'material-ui/Table';
+import Table, {TableBody} from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
 import {MuiThemeProvider, createMuiTheme} from 'material-ui/styles';
 import Reboot from 'material-ui/Reboot';
@@ -9,11 +9,13 @@ import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
 import Grid from 'material-ui/Grid';
 import MenuIcon from 'material-ui-icons/Menu';
-import TextField from "material-ui/TextField/TextField";
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import CloseIcon from 'material-ui-icons/Close';
-import Checkbox from 'material-ui/Checkbox';
+import Episode from "./EpisodeItem";
+import TableHeader from "./TableHeader";
+import TableChangeRow from "./TableChangeRow";
+import TableActionButtons from "./TableActionButtons";
 
 const theme = createMuiTheme({
     palette: {
@@ -124,79 +126,6 @@ export default class App extends Component {
         this.setState({selected: selected})
     }
 
-    handleAddClick(){
-        if ( this.state.name !== "" && this.state.code !== "") {
-            fetch('/api/episodes/', {
-                method: 'post',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    name: this.state.name,
-                    code: this.state.code,
-                    score: this.state.note
-                })
-            }).then((response) => {
-                if (response.status === 201){
-                    this.populate();
-                }else{
-                    this.setState({
-                        message: "Une erreur du côté  du serveur s'est produite",
-                        open: true
-                    })
-                }
-            })
-        }else{
-            this.setState({
-                message: "Les champs renseignés sont éronnés",
-                open: true
-            })
-        }
-    }
-    
-    handleRemoveClick(){
-        let selected = this.state.selected;
-        let promises = [];
-        selected.forEach((episodeId)=>{
-            promises.push(fetch('/api/episodes/' + episodeId, {
-                method: 'delete',
-            }));
-        });
-
-        Promise.all(promises).then((responses) => {
-            this.populate();
-            this.setState({selected: []})
-        });
-    }
-
-    handleChangeClick(){
-        if ( this.state.name !== "" && this.state.code !== "") {
-            let episodeId = this.state.selected[0];
-            fetch('/api/episodes/' + episodeId, {
-                method: 'PATCH',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    name: this.state.name,
-                    code: this.state.code,
-                    score: this.state.note
-                })
-            }).then((response) => {
-                if (response.status === 201){
-                    this.populate();
-                }else{
-                    console.log("error code: " + response.status);
-                    console.log(response.body);
-                    this.setState({
-                        message: "Une erreur du côté  du serveur s'est produite",
-                        open: true
-                    })
-                }
-            })
-        }else{
-            this.setState({
-                message: "Les champs renseignés sont éronnés",
-                open: true
-            })
-        }
-    }
 
     isSelected(id){
         return this.state.selected.includes(id);
@@ -216,73 +145,21 @@ export default class App extends Component {
                             </Toolbar>
                         </AppBar>
                         <Grid>
-                            <Grid item xs={12}>
-                                <Grid container justify="center">
+                            <Grid container justify="center">
+                                <Grid item xs={6}>
                                     <Paper style={{width: 'auto', textAlign: 'center'}}>
                                         <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell padding="checkbox"><Checkbox onChange={(event, checked) => this.handleSelectAllClick(event, checked)} checked={this.state.rowCount === this.state.selected.length}/></TableCell>
-                                                    <TableCell padding="none" style={{textAlign: 'flex-start'}}><h3>Name</h3>
-                                                    </TableCell>
-                                                    <TableCell style={{textAlign: 'center'}}><h3>Code</h3></TableCell>
-                                                    <TableCell style={{textAlign: 'flex-end'}} numeric><h3>Note</h3>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </TableHead>
+                                            <TableHeader handleSelectAllClick={this.handleSelectAllClick.bind(this)}
+                                                         length={this.state.selected.length}
+                                                         rowCount={this.state.rowCount}/>
                                             <TableBody>
                                                 {this.state.episodes.map(episode => {
-                                                    return (
-                                                        <TableRow key={episode.id}>
-                                                            <TableCell padding="checkbox" ><Checkbox onChange={() => this.handleClick(episode.id)} checked={this.isSelected(episode.id)}/></TableCell>
-                                                            <TableCell padding="none" style={{textAlign: 'flex-start'}}>
-                                                                <h4>{episode.name}</h4></TableCell>
-                                                            <TableCell style={{textAlign: 'center'}}>
-                                                                <h4>{episode.code}</h4></TableCell>
-                                                            <TableCell style={{textAlign: 'flex-end'}}
-                                                                       numeric><h4>{episode.score}</h4></TableCell>
-                                                        </TableRow>
-                                                    );
-                                                })
-                                                }
-                                                <TableRow>
-                                                    <TableCell padding="checkbox"/>
-                                                    <TableCell padding="none" style={{textAlign: 'flex-start'}}>
-                                                        <TextField
-                                                            id="name"
-                                                            label="name"
-                                                            value={this.state.name}
-                                                            onChange={this.handleChange('name')}
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            margin="normal"
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell style={{textAlign: 'center'}}>
-                                                        <TextField
-                                                            id="code"
-                                                            label="code"
-                                                            value={this.state.code}
-                                                            onChange={this.handleChange('code')}
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            margin="normal"/>
-                                                    </TableCell>
-                                                    <TableCell style={{textAlign: 'flex-end'}} numeric>
-                                                        <TextField
-                                                            id="number"
-                                                            label="Number"
-                                                            value={this.state.note}
-                                                            onChange={this.handleChange('note')}
-                                                            type="number"
-                                                            InputLabelProps={{
-                                                                shrink: true,
-                                                            }}
-                                                            margin="normal"/>
-                                                    </TableCell>
-                                                </TableRow>
+                                                    return ( <Episode key={episode.id} episode={episode} handleClick={this.handleClick.bind(this)} isSelected={this.isSelected.bind(this)}/>);
+                                                })}
+                                                <TableChangeRow name={this.state.name}
+                                                                note={this.state.note}
+                                                                code={this.state.code}
+                                                                handleChange={this.handleChange.bind(this)}/>
                                             </TableBody>
                                         </Table>
                                     </Paper>
@@ -290,23 +167,10 @@ export default class App extends Component {
                                 </Grid>
                             </Grid>
 
-                            <Grid container justify="center">
-                                <Grid item xs={12} sm={1}>
-                                    <Button variant="raised" color={'secondary'} onClick={() => this.handleAddClick()}>
-                                        Ajouter Episode
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={1}>
-                                    <Button variant="raised"  disabled={this.state.selected.length !== 1} onClick={() => this.handleChangeClick()}>
-                                        Modifier Episode
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={1}>
-                                    <Button variant="raised"  disabled={this.state.selected.length < 1} color={'primary'} onClick={() => this.handleRemoveClick()}>
-                                        Supprimer Episode
-                                    </Button>
-                                </Grid>
-                            </Grid>
+                            <TableActionButtons length={this.state.selected.length}
+                                                state={this.state}
+                                                setState={this.setState.bind(this)}
+                                                populate={this.populate.bind(this)}/>
                         </Grid>
                         <Snackbar
                             anchorOrigin={{
