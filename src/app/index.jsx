@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {AppContainer} from 'react-hot-loader';
-import {Provider} from 'react-redux';
 import App from './components/App';
 
 const appElement = document.getElementById('app');
