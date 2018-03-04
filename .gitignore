@@ -3,4 +3,5 @@ npm-debug.log
 build
 data/*
 !data/.gitkeep
+!data/icons/.gitkeep
 .idea/*
