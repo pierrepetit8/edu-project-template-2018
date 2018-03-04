@@ -48,7 +48,20 @@ const TableActionButtons = (props) => {
 
         Promise.all(promises).then((responses) => {
             populate();
-            setState({selected: []})
+            if (responses.length > 1){
+                setState({
+                    selected: [],
+                    message: responses.length + " episodes ont été supprimés",
+                    open: true
+                });
+            }else{
+                setState({
+                    selected: [],
+                    message: responses.length + " episode a été supprimé",
+                    open: true
+                });
+            }
+
         });
     }
 
