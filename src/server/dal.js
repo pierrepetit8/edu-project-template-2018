@@ -23,7 +23,7 @@ module.exports.getAll = function () {
         fs.readdir(config.data, (err, files) => {
             var promises = [];
             files.forEach(function (elt) {
-                if(fs.lstatSync(config.data + "/" + elt).isFile()){
+                if(fs.lstatSync(config.data + "/" + elt).isFile() && elt !== ".gitkeep"){
                     var fragments = elt.split('.');
                     promises.push(dal.getById(fragments[0]));
                 }
@@ -44,19 +44,21 @@ module.exports.getById = function (id) {
     return new Promise((resolve, reject) => {
         fs.readdir(config.data, (err, files) => {
             files.forEach(function (elt) {
-                var fragments = elt.split('.');
-                if (fragments.pop() == 'json' && fragments[0] == id) {
-                    readFile(elt).then((parsed) => {
-                        episode = {
-                            id: id,
-                            name: parsed.name,
-                            code: parsed.code,
-                            score: parsed.score,
-                        };
-                        resolve(episode);
-                    }).catch((err) => {
-                        reject(err);
-                    });
+                if (elt !== ".gitkeep") {
+                    var fragments = elt.split('.');
+                    if (fragments.pop() == 'json' && fragments[0] == id) {
+                        readFile(elt).then((parsed) => {
+                            episode = {
+                                id: id,
+                                name: parsed.name,
+                                code: parsed.code,
+                                score: parsed.score,
+                            };
+                            resolve(episode);
+                        }).catch((err) => {
+                            reject(err);
+                        });
+                    }
                 }
             });
         })

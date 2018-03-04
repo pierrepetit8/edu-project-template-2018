@@ -84,6 +84,8 @@ router.patch("/episodes/:id", function(req, res) {
     })
 });
 
+
+// This part is not used, we didn't take the time to use this
 router.get('/series', function(req, res) {
     dal.getAll().then((episodes) => {
         const series = [];
