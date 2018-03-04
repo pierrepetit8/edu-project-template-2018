@@ -22,11 +22,11 @@ module.exports.getAll = function () {
     return new Promise((resolve, reject) => {
         fs.readdir(config.data, (err, files) => {
             var promises = [];
-
-
             files.forEach(function (elt) {
-                var fragments = elt.split('.');
-                promises.push(dal.getById(fragments[0]));
+                if(fs.lstatSync(config.data + "/" + elt).isFile()){
+                    var fragments = elt.split('.');
+                    promises.push(dal.getById(fragments[0]));
+                }
             });
 
             Promise.all(promises).then((episodes) => {
@@ -89,8 +89,8 @@ module.exports.delete = function (id) {
 };
 
 module.exports.update = function (id, body) {
-    console.log('fkfkdsfsdlkfdslfdkslf');
     return new Promise((resolve, reject) => {
+        console.log(id);
         this.getById(id).then((episode) => {
             for (var key in body) {
                 if (episode.hasOwnProperty(key)) {

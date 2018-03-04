@@ -31,7 +31,7 @@ class AddEpisode extends React.Component {
       handleSubmit(event) {
         event.preventDefault();
         console.log('AJOUT' + this.state.name);
-        fetch('/api/episodes/add', {
+        fetch('/api/episodes/', {
             method: 'post',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({

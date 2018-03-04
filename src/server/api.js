@@ -29,7 +29,8 @@ router.get('/episodes', function(req, res) {
 router.post('/episodes', function(req, res) {
     var id = uuid.v4();
     var episodeToAdd = req.body;
-    if(typeof episodeToAdd.name !== "string" || typeof episodeToAdd.code !== "string" || typeof episodeToAdd.score !== "number") {
+    if(typeof episodeToAdd.name !== "string" || typeof episodeToAdd.code !== "string" || typeof episodeToAdd.score !== "number"
+        || episodeToAdd === "" || episodeToAdd.code === "") {
         res.status(400);
     }
     dal.insert(episodeToAdd, id).then((episode) => {
@@ -72,11 +73,12 @@ router.delete("/episodes/:id", function (req, res) {
 });
 
 router.patch("/episodes/:id", function(req, res) {
-    var id = req.params.id;
+    const id = req.params.id;
+    console.log(id);
     dal.update(id, req.body).then((episode) => {
         episode.id = id;
-        res.send(episode);
         res.status(201);
+        res.send(episode);
     }).catch(() => {
         res.status(404);
     })
@@ -143,31 +145,6 @@ router.get('/icon/:id', function (req, res) {
         });
     });
 });
-
-
-
-function fetchImage(url, localPath, index) {
-    var extensions = ['jpg', 'png', 'jpeg', 'bmp'];
-
-    if (index === extensions.length) {
-        console.log('Fetching ' + url + ' failed.');
-        return;
-    }
-
-    var fullUrl = url + extensions[index];
-
-    request.get(fullUrl, function(response) {
-        if (response.statusCode === 200) {
-            fs.write(localPath, response.body, function() {
-                console.log('Successfully downloaded file ' + url);
-            });
-        }
-
-        else {
-            fetchImage(url, localPath, index + 1);
-        }
-    });
-}
 
 module.exports = router;
 

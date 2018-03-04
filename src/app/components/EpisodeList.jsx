@@ -10,10 +10,11 @@ class EpisodeList extends React.Component {
         };
     };
     componentDidMount() {
-        fetch('/api/episodes')
+        fetch('/api/episodes/')
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            console.log("yo !");
             this.setState({episodes : data});
         });
     }
