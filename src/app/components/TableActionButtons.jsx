@@ -9,8 +9,8 @@ const TableActionButtons = (props) => {
     const setState = props.setState;
     const length = props.length;
 
-    const handleAddClick = function(){
-        if ( state.name !== "" && state.code !== "") {
+    function handleAddClick () {
+        if (state.name !== "" && state.code !== "") {
             fetch('/api/episodes/', {
                 method: 'post',
                 headers: {'Content-Type': 'application/json'},
@@ -20,27 +20,27 @@ const TableActionButtons = (props) => {
                     score: state.note
                 })
             }).then((response) => {
-                if (response.status === 201){
+                if (response.status === 201) {
                     populate();
-                }else{
+                } else {
                     setState({
                         message: "Une erreur du côté  du serveur s'est produite",
                         open: true
                     })
                 }
             })
-        }else{
+        } else {
             setState({
                 message: "Les champs renseignés sont éronnés",
                 open: true
             })
         }
-    }.bind(this);
+    }
 
-    const handleRemoveClick = function(){
+    function handleRemoveClick () {
         let selected = state.selected;
         let promises = [];
-        selected.forEach((episodeId)=>{
+        selected.forEach((episodeId) => {
             promises.push(fetch('/api/episodes/' + episodeId, {
                 method: 'delete',
             }));
@@ -50,10 +50,10 @@ const TableActionButtons = (props) => {
             populate();
             setState({selected: []})
         });
-    }.bind(this);
+    }
 
-    const handleChangeClick = function(){
-        if ( state.name !== "" && state.code !== "") {
+    function handleChangeClick () {
+        if (state.name !== "" && state.code !== "") {
             let episodeId = state.selected[0];
             fetch('/api/episodes/' + episodeId, {
                 method: 'PATCH',
@@ -64,22 +64,22 @@ const TableActionButtons = (props) => {
                     score: state.note
                 })
             }).then((response) => {
-                if (response.status === 201){
+                if (response.status === 201) {
                     populate();
-                }else{
+                } else {
                     setState({
                         message: "Une erreur du côté  du serveur s'est produite",
                         open: true
                     })
                 }
             })
-        }else{
+        } else {
             setState({
                 message: "Les champs renseignés sont éronnés",
                 open: true
             })
         }
-    }.bind(this);
+    }
 
     return (
         <Grid container justify="center">
@@ -89,12 +89,12 @@ const TableActionButtons = (props) => {
                 </Button>
             </Grid>
             <Grid item xs={12} sm={1}>
-                <Button variant="raised"  disabled={length !== 1} onClick={() => handleChangeClick()}>
+                <Button variant="raised" disabled={length !== 1} onClick={() => handleChangeClick()}>
                     Modifier Episode
                 </Button>
             </Grid>
             <Grid item xs={12} sm={1}>
-                <Button variant="raised"  disabled={length < 1} color={'primary'} onClick={() => handleRemoveClick()}>
+                <Button variant="raised" disabled={length < 1} color={'primary'} onClick={() => handleRemoveClick()}>
                     Supprimer Episode
                 </Button>
             </Grid>

@@ -1,7 +1,4 @@
 import React, {Component} from 'react';
-
-import Table, {TableBody} from 'material-ui/Table';
-import Paper from 'material-ui/Paper';
 import {MuiThemeProvider, createMuiTheme} from 'material-ui/styles';
 import Reboot from 'material-ui/Reboot';
 import AppBar from 'material-ui/AppBar';
@@ -9,13 +6,10 @@ import Toolbar from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
 import Grid from 'material-ui/Grid';
 import MenuIcon from 'material-ui-icons/Menu';
-import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import CloseIcon from 'material-ui-icons/Close';
-import Episode from "./EpisodeItem";
-import TableHeader from "./TableHeader";
-import TableChangeRow from "./TableChangeRow";
 import TableActionButtons from "./TableActionButtons";
+import TableList from "./TableList";
 
 const theme = createMuiTheme({
     palette: {
@@ -34,16 +28,14 @@ const theme = createMuiTheme({
     },
 });
 
-const styles = theme => ({
-    root: {
-        width: '100%',
-        marginTop: theme.spacing.unit * 3,
-        overflowX: 'auto',
-    },
-    table: {
-        minWidth: 700,
-    },
-});
+
+function compare(a, b) {
+    if (a.name < b.name)return -1;
+    if (a.name > b.name)return 1;
+    if (a.code < b.code)return -1;
+    if (a.code > b.code)return 1;
+    return 0;
+}
 
 export default class App extends Component {
     constructor(props) {
@@ -71,17 +63,12 @@ export default class App extends Component {
         fetch('/api/episodes')
             .then(response => response.json())
             .then(data => {
+                data.sort(compare);
                 this.setState({episodes: data, rowCount: data.length});
             });
     }
 
-    handleChange(name) {
-        return (event) => {
-            this.setState({
-                [name]: event.target.value,
-            });
-        };
-    }
+
 
     handleClose(event, reason) {
         if (reason === 'clickaway') {
@@ -89,46 +76,6 @@ export default class App extends Component {
         }
 
         this.setState({open: false});
-    };
-
-    handleSelectAllClick(event, checked){
-        if (checked) {
-            this.state.episodes.map((episode)=>{
-                if (!this.isSelected(episode.id)){
-                    this.state.selected.push(episode.id);
-                }
-            });
-            this.setState({selected : this.state.selected});
-            return;
-        }
-        this.setState({ selected: [] });
-    };
-
-    handleClick(id){
-        let selected = this.state.selected;
-        let index = selected.indexOf(id)
-        if (index !== -1){
-            selected.splice(index,1);
-        }else{
-            selected.push(id);
-        }
-        if(selected.length === 1){
-            const episode = this.state.episodes.find((e) =>{
-                return e.id === selected[0];
-            });
-
-            this.setState({
-                note: episode.score,
-                name: episode.name,
-                code: episode.code,
-            })
-        }
-        this.setState({selected: selected})
-    }
-
-
-    isSelected(id){
-        return this.state.selected.includes(id);
     };
 
     render() {
@@ -145,28 +92,9 @@ export default class App extends Component {
                             </Toolbar>
                         </AppBar>
                         <Grid>
-                            <Grid container justify="center">
-                                <Grid item xs={6}>
-                                    <Paper style={{width: 'auto', textAlign: 'center'}}>
-                                        <Table>
-                                            <TableHeader handleSelectAllClick={this.handleSelectAllClick.bind(this)}
-                                                         length={this.state.selected.length}
-                                                         rowCount={this.state.rowCount}/>
-                                            <TableBody>
-                                                {this.state.episodes.map(episode => {
-                                                    return ( <Episode key={episode.id} episode={episode} handleClick={this.handleClick.bind(this)} isSelected={this.isSelected.bind(this)}/>);
-                                                })}
-                                                <TableChangeRow name={this.state.name}
-                                                                note={this.state.note}
-                                                                code={this.state.code}
-                                                                handleChange={this.handleChange.bind(this)}/>
-                                            </TableBody>
-                                        </Table>
-                                    </Paper>
-
-                                </Grid>
-                            </Grid>
-
+                            <TableList length={this.state.selected.length}
+                                       state={this.state}
+                                       setState={this.setState.bind(this)}/>
                             <TableActionButtons length={this.state.selected.length}
                                                 state={this.state}
                                                 setState={this.setState.bind(this)}
