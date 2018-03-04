@@ -9,7 +9,7 @@ const TableActionButtons = (props) => {
     const setState = props.setState;
     const length = props.length;
 
-    function handleAddClick () {
+    function handleAddClick() {
         if (state.name !== "" && state.code !== "") {
             fetch('/api/episodes/', {
                 method: 'post',
@@ -37,7 +37,7 @@ const TableActionButtons = (props) => {
         }
     }
 
-    function handleRemoveClick () {
+    function handleRemoveClick() {
         let selected = state.selected;
         let promises = [];
         selected.forEach((episodeId) => {
@@ -52,7 +52,7 @@ const TableActionButtons = (props) => {
         });
     }
 
-    function handleChangeClick () {
+    function handleChangeClick() {
         if (state.name !== "" && state.code !== "") {
             let episodeId = state.selected[0];
             fetch('/api/episodes/' + episodeId, {

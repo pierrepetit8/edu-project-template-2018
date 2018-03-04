@@ -18,29 +18,29 @@ const TableList = (props) => {
         };
     }
 
-    function handleSelectAllClick(event, checked){
+    function handleSelectAllClick(event, checked) {
         if (checked) {
-            state.episodes.map((episode)=>{
-                if (!isSelected(episode.id)){
+            state.episodes.map((episode) => {
+                if (!isSelected(episode.id)) {
                     state.selected.push(episode.id);
                 }
             });
-            setState({selected : state.selected});
+            setState({selected: state.selected});
             return;
         }
-        setState({ selected: [] });
+        setState({selected: []});
     }
 
-    function handleClick(id){
+    function handleClick(id) {
         let selected = state.selected;
         let index = selected.indexOf(id);
-        if (index !== -1){
-            selected.splice(index,1);
-        }else{
+        if (index !== -1) {
+            selected.splice(index, 1);
+        } else {
             selected.push(id);
         }
-        if(selected.length === 1){
-            const episode = state.episodes.find((e) =>{
+        if (selected.length === 1) {
+            const episode = state.episodes.find((e) => {
                 return e.id === selected[0];
             });
 
@@ -53,7 +53,7 @@ const TableList = (props) => {
         setState({selected: selected})
     }
 
-    function isSelected(id){
+    function isSelected(id) {
         return state.selected.includes(id);
     }
 
@@ -67,7 +67,8 @@ const TableList = (props) => {
                                      rowCount={state.rowCount}/>
                         <TableBody>
                             {state.episodes.map(episode => {
-                                return ( <Episode key={episode.id} episode={episode} handleClick={handleClick.bind(this)} isSelected={isSelected.bind(this)}/>);
+                                return (<Episode key={episode.id} episode={episode} handleClick={handleClick.bind(this)}
+                                                 isSelected={isSelected.bind(this)}/>);
                             })}
                             <TableChangeRow name={state.name}
                                             note={state.note}

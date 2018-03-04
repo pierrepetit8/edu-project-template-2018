@@ -7,7 +7,9 @@ const TableHeader = (props) => {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox"><Checkbox onChange={(event, checked) => props.handleSelectAllClick(event, checked)} checked={props.rowCount === props.length}/></TableCell>
+                <TableCell padding="checkbox"><Checkbox
+                    onChange={(event, checked) => props.handleSelectAllClick(event, checked)}
+                    checked={props.rowCount === props.length}/></TableCell>
                 <TableCell padding="none" style={{textAlign: 'flex-start'}}><h3>Name</h3>
                 </TableCell>
                 <TableCell style={{textAlign: 'center'}}><h3>Code</h3></TableCell>

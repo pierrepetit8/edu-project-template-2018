@@ -30,10 +30,10 @@ const theme = createMuiTheme({
 
 
 function compare(a, b) {
-    if (a.name < b.name)return -1;
-    if (a.name > b.name)return 1;
-    if (a.code < b.code)return -1;
-    if (a.code > b.code)return 1;
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    if (a.code < b.code) return -1;
+    if (a.code > b.code) return 1;
     return 0;
 }
 
@@ -67,7 +67,6 @@ export default class App extends Component {
                 this.setState({episodes: data, rowCount: data.length});
             });
     }
-
 
 
     handleClose(event, reason) {
